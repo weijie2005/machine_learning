@@ -3,6 +3,8 @@ from sklearn.neighbors import KNeighborsRegressor
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import StandardScaler
 from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -24,7 +26,7 @@ K值distanc measure三种距离计算方法：
 '''
 
 def knn_classifier_model(X_train, y_train, X_test, n_neighbors=3):
-    # 创建KNN模型
+    # 创建KNN分类模型
     knn = KNeighborsClassifier(n_neighbors=n_neighbors)
     
     # 训练模型
@@ -36,7 +38,7 @@ def knn_classifier_model(X_train, y_train, X_test, n_neighbors=3):
     return y_pred
 
 def knn_regressor_model(X_train, y_train, X_test, n_neighbors=3):
-    # 创建KNN模型
+    # 创建KNN回归模型
     knn = KNeighborsRegressor(n_neighbors=n_neighbors)
     
     # 训练模型
@@ -51,7 +53,7 @@ def knn_maxminScaler():
     # 原始数据（特征1范围大，特征2范围小）
     data = np.array([[100, 1], [200, 2], [300, 3]])
 
-    # 创建MinMaxScaler对象
+    # 创建MinMaxScaler最小-最大归一化对象
     scaler = MinMaxScaler(feature_range=(1, 10))
     
     # 对数据进行归一化缩放
@@ -63,7 +65,7 @@ def knn_standardScaler():
     # 原始数据（特征1范围大，特征2范围小）
     data = np.array([[100, 1], [200, 2], [300, 3]])
 
-    # 创建StandardScaler对象
+    # 创建StandardScaler标准归一化对象
     scaler = StandardScaler()
     
     # 对数据进行归一化缩放
@@ -72,7 +74,7 @@ def knn_standardScaler():
     print("特征标准归一化后数据的均值:", scaler.mean_)
     print("特征标准归一化后数据的标准差:", scaler.var_)
 
-def iris_predict():
+def iris_show():
     # 加载鸢尾花数据集    
     iris_data = load_iris()
 
@@ -83,16 +85,17 @@ def iris_predict():
     # print("数据集的文件名:", iris_data.filename)
     # print("数据集的描述:", iris_data.DESCR)
 
+    # 数据集的特征处理，将特征数据转换为DataFrame格式，并增加目标数据列
     iris_df=pd.DataFrame(iris_data.data, columns=iris_data.feature_names)
     iris_df['target']=iris_data.target
     
     target_names=iris_data.target_names
     iris_df['target_name']=[target_names[i] for i in iris_df['target']]
 
-    print("数据集前五行:", iris_df.head(20))
+    #print("数据集前五行:\n", iris_df.head(20))
 
     #seaborn可视化    
-    sns.lmplot(x='sepal length (cm)', y='petal width (cm)', hue='target_name', data=iris_df,fit_reg=False)
+    sns.lmplot(x='Sepal Length (cm)', y='petal width (cm)', hue='target_name', data=iris_df,fit_reg=False)
     plt.title("Iris Sepal Length vs Petal Width")
     plt.xlabel("Sepal Length (cm)")
     plt.ylabel("Petal Width (cm)")
@@ -100,28 +103,63 @@ def iris_predict():
 
     return 
 
+def iris_knn_predict():
+    # 1.加载鸢尾花数据集    
+    iris_data = load_iris()
+
+    # 2.数据集分类
+    x_train, x_test, y_train, y_test = train_test_split(iris_data.data, iris_data.target, test_size=0.3, random_state=22)
+
+    # 3.特征标准归一化
+    scaler=StandardScaler()
+    x_train=scaler.fit_transform(x_train)
+    x_test=scaler.transform(x_test)
+
+    # 4.knn分类模型训练
+    kc= KNeighborsClassifier(n_neighbors=3)
+    kc.fit(x_train, y_train)
+
+    # 5.模型评估
+    print("模型准确率:", kc.score(x_test, y_test))
+
+    # 6.模型预测
+    new_data = [[5.1,3.5,1.4,0.2],
+                [4.6,3.1,1.5,0.2]
+            ]
+
+    # 6.1对新数据进行归一化处理
+    new_data=scaler.transform(new_data)
+
+    # 6.2预测分类的结果
+    new_pred = kc.predict(new_data)
+
+    # 6.3预测分类的概率
+    new_pred_proba = kc.predict_proba(new_data)
+
+    print("新数据的预测类别:", new_pred,iris_data.target_names[new_pred][0])
+    print("新数据的预测类别概率:", new_pred_proba)
+    
+
 if __name__ == '__main__':
-    # 示例数据
-    X_train = [[1, 2], [2, 3], [3, 4], [4, 5]]
-    y_train = [0, 0, 1, 1]
-    X_test = [[1.5, 2.5], [3.5, 4.5]]
     
-    # 调用KNN模型
-    kc= knn_classifier_model(X_train, y_train, X_test)
-    print("分类预测结果:", kc)
+    # 1.调用KNN分类模型
+    # X_train = [[1, 2], [2, 3], [3, 4], [4, 5]]
+    # y_train = [0, 0, 1, 1]
+    # X_test = [[1.5, 2.5], [3.5, 4.5]]    
+    # kc= knn_classifier_model(X_train, y_train, X_test)
+    # print("分类预测结果:", kc)
 
-    # 回归示例数据
-    X_train = [[1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7]]
-    y_train = [0.5, 1.0, 1.5, 2.0, 2.5, 3.0]
-    X_test = [[3.5, 2.5], [3, 4.5]]
-    
-    # 调用KNN模型
-    kr = knn_regressor_model(X_train, y_train, X_test)
-    print("回归预测结果:", kr)
+    # 2.调用KNN回归模型
+    # X_train = [[1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7]]
+    # y_train = [0.5, 1.0, 1.5, 2.0, 2.5, 3.0]
+    # X_test = [[3.5, 2.5], [3, 4.5]]    
+    # kr = knn_regressor_model(X_train, y_train, X_test)
+    # print("回归预测结果:", kr)
 
-    # 调用归一化函数
-    knn_maxminScaler()
-    knn_standardScaler()
+    # 3.调用归一化函数示例
+    #knn_maxminScaler()
+    #knn_standardScaler()
 
-    # 调用鸢尾花预测函数
-    iris_predict()
+    # 4.实例：鸢尾花处理与预测
+    #iris_show()
+    iris_knn_predict()

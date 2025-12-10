@@ -35,7 +35,8 @@ def ridge_regression():
     X2=np.hstack([X,X**2,X**3,X**4,X**5,X**6,X**7,X**8,X**9,X**10])
 
     # 训练模型，使用Ridge回归，减少过拟合，alpha惩罚系数为0.005，alpha惩罚系数越小,高次项系数越小，特征就减弱
-    model=Ridge(alpha=0.005)
+    # solver：求解器，默认是auto，自动选择求解器，也可以指定为其他求解器，如sag、saga等
+    model=Ridge(alpha=0.005,solver='auto',max_iter=1000) 
     model.fit(X2,y_data) 
 
     # 模型预测

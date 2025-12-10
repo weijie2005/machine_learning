@@ -12,6 +12,7 @@ from sklearn.model_selection import GridSearchCV
 
 import joblib
 '''
+0.手写数字识别，使用KNN算法训练模型
 1.数据集下载
     网站上下载数据集四个文件：https://www.kaggle.com/datasets/hojjatk/mnist-dataset ，也可以在国内找资源下载
     train-images-idx3-ubyte.gz ,train-labels-idx1-ubyte.gz ,t10k-images-idx3-ubyte.gz ,t10k-labels-idx1-ubyte.gz
@@ -264,9 +265,9 @@ if __name__ == "__main__":
     #1. 从OpenML下载MNIST数据集，无法访问openml.org
     #mnist_data = load_mnist_sklearn()
 
-    mnist_path = r'd:\python_code\machine_learning\KNeighborsClassifier\data'
-    model_path = r'd:\python_code\machine_learning\KNeighborsClassifier\model'
-    test_filename = rf'd:\python_code\machine_learning\KNeighborsClassifier\test\test_6.png'
+    mnist_path = r'd:\python_code\machine_learning\1_KNeighborsClassifier\data'
+    model_path = r'd:\python_code\machine_learning\1_KNeighborsClassifier\model'
+    test_filename = rf'd:\python_code\machine_learning\1_KNeighborsClassifier\test\22.png'
 
     #2. 加载本地MNIST数据
     if not os.path.exists(os.path.join(mnist_path, './mnist_train.csv')):

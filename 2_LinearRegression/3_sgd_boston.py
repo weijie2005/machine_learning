@@ -72,15 +72,16 @@ def train_model():
     x_train=scaler.fit_transform(x_train)
     x_test=scaler.transform(x_test) 
 
-    # 随机梯度下降法，训练模型
-    model=SGDRegressor(loss="squared_error",max_iter=1000,learning_rate="constant",eta0=0.01,random_state=22)
+    # 随机梯度下降法，训练模型，损失函数：均方误差（squared_loss），学习率是常数learning_rate="constant"：eta0=0.01，迭代次数max_iter=1000 
+    # (动态可调整学习率learning_rate="inscaling",eta=eta0/pow(t,power_t=0.25),根据时间t动态调整学习率，默认power_t=0.25)
+    model=SGDRegressor(loss="squared_loss",max_iter=1000,learning_rate="constant",eta0=0.01,random_state=22)
     model.fit(x_train,y_train)
 
     # 模型预测
     y_pred=model.predict(x_test)
-    print(f"模型预测结果: {y_pred[5]}")
-    print(f"模型权重系数: {model.coef_}")
-    print(f"模型偏置: {model.intercept_}")
+    print(f"模型预测结果前5个: {y_pred[:5]}")
+    print(f"模型回归系数: {model.coef_}")
+    print(f"模型偏置值: {model.intercept_}")
 
     # 模型评估，MSE和R^2
     mse=mean_squared_error(y_test,y_pred)
